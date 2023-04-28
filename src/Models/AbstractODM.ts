@@ -1,5 +1,6 @@
 import { Model, Schema, models,
-  model } from 'mongoose';
+  model, 
+  isValidObjectId } from 'mongoose';
   
 abstract class AbstractODM<T> {
   protected model: Model<T>;
@@ -18,6 +19,12 @@ abstract class AbstractODM<T> {
   
   public async getAll(): Promise<T[]> {
     return this.model.find();
+  }
+
+  public async getById(id: string): Promise<T | null> {
+    if (!isValidObjectId(id)) throw Error('Invalid mongo id');
+
+    return this.model.findById(id);
   }
 
   //   public async update(id: string, obj: Partial<T>):
