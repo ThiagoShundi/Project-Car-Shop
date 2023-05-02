@@ -60,6 +60,15 @@ describe('Validação da ODM Motorcycle', function () {
     expect(result).to.be.deep.equal(motorcycleOutput);
   });
 
+  it('Consegue fazer um update de uma moto', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves(motorcycleOutput);
+
+    const service = new MotorcycleService();
+    const result = await service.updateMotorcycle('6451550c464d2e18c7d8ed6c', motorcycleInput);
+
+    expect(result).to.be.deep.equal(motorcycleOutput);
+  });
+
   afterEach(function () {
     sinon.restore();
   });

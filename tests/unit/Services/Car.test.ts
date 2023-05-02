@@ -60,6 +60,15 @@ describe('Validação da ODM Car', function () {
     expect(result).to.be.deep.equal(carOutput);
   });
 
+  it('Consegue fazer um update de um carro', async function () {
+    sinon.stub(Model, 'findByIdAndUpdate').resolves(carOutput);
+
+    const service = new CarService();
+    const result = await service.updateCar('64514aff464d2e18c7d8ed68', carInput);
+
+    expect(result).to.be.deep.equal(carOutput);
+  });
+
   afterEach(function () {
     sinon.restore();
   });
