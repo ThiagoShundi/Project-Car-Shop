@@ -1,86 +1,66 @@
-// import { expect } from 'chai';
-// import sinon from 'sinon';
-// import { Model } from 'mongoose';
-// import Key from '../../../src/Domain/Key/Key';
-// import IKey from '../../../src/Interfaces/IKey';
-// import KeyService from '../../../src/Services/KeyService';
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { Model } from 'mongoose';
+import Car from '../../../src/Domains/Car';
+import ICar from '../../../src/Interfaces/ICar';
+import CarService from '../../../src/Services/CarService';
 
-// const RESULT_ERROR = 'Invalid Key';
+describe('Validação da ODM Car', function () {
+  const carInput: ICar = {
+    model: 'Marea',
+    year: 2002,
+    color: 'Black',
+    status: true,
+    buyValue: 15.990,
+    doorsQty: 4,
+    seatsQty: 5,
+  };
+  
+  const carOutput: Car = new Car({
+    id: '64514aff464d2e18c7d8ed68',
+    ...carInput,
+  });
 
-// describe('Deveria validar e criar chaves', function () {
-//   it('Criando uma chave de tipo Carro com SUCESSO', async function () {
-//     const keyInput: IKey = {
-//       value: '478.966.190-32',
-//       owner: 'Jack C.',
-//       type: 'cpf',
-//     };
-//     const keyOutput: Key = new Key(
-//       '478.966.190-32',
-//       'Jack C.',
-//       'cpf',
-//       '633ec9fa3df977e30e993492',
-//     );
-//     sinon.stub(Model, 'create').resolves(keyOutput);
+  const carList = [
+    {
+      id: '64514aff464d2e18c7d8ed68',
+      model: 'Marea',
+      year: 2002,
+      color: 'Black',
+      status: true,
+      buyValue: 15.990,
+      doorsQty: 4,
+      seatsQty: 5,
+    },
+  ];
 
-//     const service = new KeyService();
-//     const result = await service.register(keyInput);
+  it('Criando um tipo carro com SUCESSO', async function () {
+    sinon.stub(Model, 'create').resolves(carOutput);
 
-//     expect(result).to.be.deep.equal(keyOutput);
-//   });
+    const service = new CarService();
+    const result = await service.register(carInput);
 
-//   it('Criando uma chave de tipo CPF inválida', async function () {
-//     const keyInput: IKey = {
-//       value: '478.966.190-32XX',
-//       owner: 'Jack C.',
-//       type: 'cpf',
-//     };
-//     sinon.stub(Model, 'create').resolves({});
-    
-//     try {
-//       const service = new KeyService();
-//       await service.register(keyInput);
-//     } catch (error) {
-//       expect((error as Error).message).to.be.equal(RESULT_ERROR);
-//     }
-//   });
+    expect(result).to.be.deep.equal(carOutput);
+  });
 
-//   it('Criando uma chave de tipo Phone Number com SUCESSO', async function () {
-//     const keyInput: IKey = {
-//       value: '+55 (18) 99999-8888',
-//       owner: 'Abreu L.',
-//       type: 'phonenumber',
-//     };
-//     const keyOutput: Key = new Key(
-//       '+55 (18) 99999-8888',
-//       'Abreu L.',
-//       'phonenumber',
-//       '633ec9fa3df977e30e993492',
-//     );
-//     sinon.stub(Model, 'create').resolves(keyOutput);
+  it('Consegue fazer uma consulta por todos os carros', async function () {
+    sinon.stub(Model, 'find').resolves(carList);
 
-//     const service = new KeyService();
-//     const result = await service.register(keyInput);
+    const service = new CarService();
+    const result = await service.listCars();
 
-//     expect(result).to.be.deep.equal(keyOutput);
-//   });
+    expect(result).to.be.deep.equal(carList);
+  });
 
-//   it('Criando chave de tipo Phone Number é inválida', async function () {
-//     const keyInput: IKey = {
-//       value: '9999-8888',
-//       owner: 'Abreu L.',
-//       type: 'phonenumber',
-//     };
-//     sinon.stub(Model, 'create').resolves({});
-    
-//     try {
-//       const service = new KeyService();
-//       await service.register(keyInput);
-//     } catch (error) {
-//       expect((error as Error).message).to.be.equal(RESULT_ERROR);
-//     }
-//   });
+  it('Testa a busca pro carro por id', async function () {
+    sinon.stub(Model, 'findById').resolves(carOutput);
 
-//   afterEach(function () {
-//     sinon.restore();
-//   });
-// });
+    const service = new CarService();
+    const result = await service.listCarId('64514aff464d2e18c7d8ed68');
+    expect(result).to.be.deep.equal(carOutput);
+  });
+
+  afterEach(function () {
+    sinon.restore();
+  });
+});

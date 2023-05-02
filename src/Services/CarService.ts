@@ -34,6 +34,18 @@ class CarService {
 
     return this.createCarDomain(newCar);
   }
+
+  public async updateCar(id: string, carData: ICar) {
+    const carODM = new CarODM();
+    const newCar = await carODM.update(id, carData);
+
+    // console.log(newCar);
+    if (!newCar) {
+      throw new Error('Car not found');
+    }
+
+    return this.createCarDomain(newCar);
+  }
 }
 
 export default CarService;
